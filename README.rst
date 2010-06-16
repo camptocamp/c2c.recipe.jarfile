@@ -16,7 +16,8 @@ Create a buildout.cfg file which contains the following::
             foo/bar/*.png
             foo/bar/baz/config.yaml
             foo/bar/WEB-INF/
-    output = /path/to/tomcat/webapps/final.war
+    output = /path/to/tomcat/webapps/foobar.war
 
-If the first input argument is a war file, it will be updated with the next
-files. If not, a new war file will be created.
+'input' items are the files to be included in the final war, the result is then
+save into 'output'.
+
