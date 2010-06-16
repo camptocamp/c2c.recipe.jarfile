@@ -1,4 +1,12 @@
-example usage:
+=====================
+c2c.recipe.installwar
+=====================
+
+Usage
+-----
+
+Create a buildout.cfg file which contains the following::
+
     [buildout]
     parts = warinstall
 
