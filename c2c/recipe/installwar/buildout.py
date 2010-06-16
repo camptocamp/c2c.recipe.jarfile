@@ -3,6 +3,7 @@
 #
 import os
 import shutil
+import tempfile
 from subprocess import call, STDOUT
 
 class InstallWar(object):
