@@ -3,6 +3,7 @@
 import os
 import shutil
 import tempfile
+from glob import glob
 from subprocess import call, STDOUT
 
 class CreateUpdateJar(object):
@@ -11,8 +12,12 @@ class CreateUpdateJar(object):
         base = buildout['buildout']['directory']
 
         self.basedir = os.path.join(base, options['basedir'])
-        # check if self.basedir exists
-        self.input = options['input'].split()
+
+        self.input = []
+        os.chdir(self.basedir)
+        for item in options['input'].split():
+            self.input.extend(glob(item))
+
         self.output = os.path.join(base, options['output'])
         # check if os.basedir(self.output) exists and is writable
         # check if self.output is not a directory
@@ -23,20 +28,20 @@ class CreateUpdateJar(object):
     def install(self):
         tmpdir = tempfile.mkdtemp()
         jarfile = os.path.join(tmpdir, os.path.basename(self.output))
-        args = {'jarfile': jarfile, 'basedir': self.basedir}
+        args = {'jarfile': jarfile}
 
         if self.mode == 'create':
-            args.update({'inputfiles': self.input})
-            cmd = "jar cf %(jarfile)s -C %(basedir)s %(inputfiles)s"%args
+            args.update({'inputfiles': ' '.join(self.input)})
+            cmd = "jar cf %(jarfile)s %(inputfiles)s"%args
         elif self.mode == 'update':
-            shutil.copy(self.input[0], jarfile)
-            args.update({'inputfiles': self.input[1:]})
-            cmd = "jar uf %(jarfile)s -C %(basedir)s %(inputfiles)s"%args 
+            shutil.copy(os.path.join(self.basedir, self.input[0]), jarfile)
+            args.update({'inputfiles': ' '.join(self.input[1:])})
+            cmd = "jar uf %(jarfile)s %(inputfiles)s"%args 
         else:
             raise 'unknow mode'
 
         errors = tempfile.TemporaryFile()
-        retcode = call(cmd.split(), cwd=tmpdir, stdout=errors, stderr=STDOUT)
+        retcode = call(cmd.split(), cwd=self.basedir, stdout=errors, stderr=STDOUT)
         
         if retcode != 0:
             errors.seek(0)
