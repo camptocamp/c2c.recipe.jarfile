@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-# buildout recipe for c2c.recipe.installwar
-#
+
 import os
 import shutil
 import tempfile
 from subprocess import call, STDOUT
 
-class InstallWar(object):
+class CreateUpdateJar(object):
     def __init__(self, buildout, name, options):
         self.name = name
         base = buildout['buildout']['directory']

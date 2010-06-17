@@ -1,3 +1,4 @@
 *.pyc
-c2c.recipe.installwar.egg-info/
+*.egg-info/
 dist/
+MANIFEST
