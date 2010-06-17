@@ -17,6 +17,7 @@ Create a buildout.cfg file which contains the following::
     basedir = foo/bar/
     input = base.war *.png baz/config.yaml WEB-INF/
     output = /path/to/tomcat/webapps/foobar.war
+    mode = update
 
 Where:
 
@@ -24,7 +25,9 @@ Where:
  * 'input' items are the files to be included in the final jar, they must be
    relative to 'basedir'.
  * 'output' is the jar destination (eg. a tomcat webapps directory)
+ * 'mode' [create|update] create a new archive using all the files in 'input'
+   or create an updated version of the first item of 'input' using the rest of
+   the files 
 
 TODO:
  * jar cmd in config file
- * explicit update or create option ? mod = [create|install|auto]

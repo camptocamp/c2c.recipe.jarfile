@@ -17,22 +17,33 @@ class CreateUpdateJar(object):
         # check if os.basedir(self.output) exists and is writable
         # check if self.output is not a directory
 
+        self.mode = options.get('mode')
+        # assert self.mode in ['create', 'update']
+
     def install(self):
-        warname = os.path.basename(self.output)
-        tmpwar = os.path.join(tempfile.mkdtemp(), warname)
+        tmpdir = tempfile.mkdtemp()
+        jarfile = os.path.join(tmpdir, os.path.basename(self.output))
+        args = {'jarfile': jarfile, 'basedir': self.basedir}
+
+        if self.mode == 'create':
+            args.update({'inputfiles': self.input})
+            cmd = "jar cf %(jarfile)s -C %(basedir)s %(inputfiles)s"%args
+        elif self.mode == 'update':
+            shutil.copy(self.input[0], jarfile)
+            args.update({'inputfiles': self.input[1:]})
+            cmd = "jar uf %(jarfile)s -C %(basedir)s %(inputfiles)s"%args 
+        else:
+            raise 'unknow mode'
+
         errors = tempfile.TemporaryFile()
-
-        cmd = "jar -cf %s %s"%(tmpwar, ' '.join(self.input))
-        retcode = call(cmd.split(), cwd=self.basedir, stdout=errors, stderr=STDOUT)
-
+        retcode = call(cmd.split(), cwd=tmpdir, stdout=errors, stderr=STDOUT)
+        
         if retcode != 0:
             errors.seek(0)
-            # raise
-
-        shutil.copy(tmpwar, self.output)
-        shutil.rmtree(os.path.dirname(tmpwar))
-
-        # returns the war and the directory name
-        return [self.output, self.output.replace('.war', '')]
+            raise 'error while creating jar'
+        else:
+            shutil.copy(jarfile, self.output)
+            shutil.rmtree(tmpdir)
+            return [self.output, self.output.replace('.war', '')]
 
     update = install
