@@ -13,11 +13,7 @@ class CreateUpdateJar(object):
         base = buildout['buildout']['directory']
 
         self.basedir = os.path.join(base, options['basedir'])
-
-        self.input = []
-        os.chdir(self.basedir)
-        for item in options['input'].split():
-            self.input.extend(glob(item))
+        self.input = options.get('input', '')
 
         self.output = os.path.join(base, options['output'])
         # check if os.basedir(self.output) exists and is writable
@@ -27,17 +23,23 @@ class CreateUpdateJar(object):
         if self.mode not in ['create', 'update']:
             raise zc.buildout.UserError('invalid mode. must be create or update')
 
+
     def install(self):
+        os.chdir(self.basedir)
+        filenames = []
+        for item in self.input.split():
+            filenames.extend(glob(item))
+
         tmpdir = tempfile.mkdtemp()
         jarfile = os.path.join(tmpdir, os.path.basename(self.output))
         args = {'jarfile': jarfile}
 
         if self.mode == 'create':
-            args.update({'inputfiles': ' '.join(self.input)})
+            args.update({'inputfiles': ' '.join(filenames)})
             cmd = "jar cf %(jarfile)s %(inputfiles)s"%args
         elif self.mode == 'update':
-            shutil.copy(os.path.join(self.basedir, self.input[0]), jarfile)
-            args.update({'inputfiles': ' '.join(self.input[1:])})
+            shutil.copyfile(os.path.join(self.basedir, filenames[0]), jarfile)
+            args.update({'inputfiles': ' '.join(filenames[1:])})
             cmd = "jar uf %(jarfile)s %(inputfiles)s"%args 
 
         errors = tempfile.TemporaryFile()
@@ -48,7 +50,7 @@ class CreateUpdateJar(object):
             shutil.rmtree(tmpdir)
             raise Exception("error while creating jar: \n%s\n"%errors.read())
         else:
-            shutil.copy(jarfile, self.output)
+            shutil.copyfile(jarfile, self.output)
             shutil.rmtree(tmpdir)
             return [self.output, self.output.replace('.war', '')]
 

@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'c2c.recipe.jarfile',
-    version = '0.3',
+    version = '0.4.1',
     license = 'MIT License',
 
     author  = 'Frederic Junod',
@@ -23,6 +23,7 @@ setup(
         'License :: OSI Approved :: MIT License'
     ],
 
+    zip_safe = False, 
     install_requires = [],
     packages = find_packages(exclude=['ez_setup']),
     namespace_packages = ['c2c', 'c2c.recipe'],
