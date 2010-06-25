@@ -45,6 +45,7 @@ class CreateUpdateJar(object):
         
         if retcode != 0:
             errors.seek(0)
+            shutil.rmtree(tmpdir)
             raise Exception("error while creating jar: \n%s\n"%errors.read())
         else:
             shutil.copy(jarfile, self.output)
