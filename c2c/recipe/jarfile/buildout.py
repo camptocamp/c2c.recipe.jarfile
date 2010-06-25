@@ -5,6 +5,7 @@ import shutil
 import tempfile
 from glob import glob
 from subprocess import call, STDOUT
+import zc.buildout
 
 class CreateUpdateJar(object):
     def __init__(self, buildout, name, options):
@@ -23,7 +24,8 @@ class CreateUpdateJar(object):
         # check if self.output is not a directory
 
         self.mode = options.get('mode')
-        # assert self.mode in ['create', 'update']
+        if self.mode not in ['create', 'update']:
+            raise zc.buildout.UserError('invalid mode. must be create or update')
 
     def install(self):
         tmpdir = tempfile.mkdtemp()
@@ -37,8 +39,6 @@ class CreateUpdateJar(object):
             shutil.copy(os.path.join(self.basedir, self.input[0]), jarfile)
             args.update({'inputfiles': ' '.join(self.input[1:])})
             cmd = "jar uf %(jarfile)s %(inputfiles)s"%args 
-        else:
-            raise 'unknow mode'
 
         errors = tempfile.TemporaryFile()
         retcode = call(cmd.split(), cwd=self.basedir, stdout=errors, stderr=STDOUT)
