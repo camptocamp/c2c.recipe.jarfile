@@ -4,9 +4,13 @@ c2c.recipe.jarfile
 
 A buildout recipe to create or update jar archive file.
 
+Requirements
+------------
+Requires zc.buildout and the 'jar' command.
+
+
 Usage
 -----
-
 Create a buildout.cfg file which contains the following::
 
     [buildout]

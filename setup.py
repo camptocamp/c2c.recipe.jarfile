@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'c2c.recipe.jarfile',
-    version = '0.4.1',
+    version = '0.4.2',
     license = 'MIT License',
 
     author  = 'Frederic Junod',
@@ -24,7 +24,7 @@ setup(
     ],
 
     zip_safe = False, 
-    install_requires = [],
+    install_requires = ['zc.buildout'],
     packages = find_packages(exclude=['ez_setup']),
     namespace_packages = ['c2c', 'c2c.recipe'],
     entry_points = {'zc.buildout' : ['default = c2c.recipe.jarfile.buildout:CreateUpdateJar']}
