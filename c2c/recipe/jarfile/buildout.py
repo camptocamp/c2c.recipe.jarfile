@@ -3,6 +3,7 @@
 import os
 import shutil
 import tempfile
+import logging
 from glob import glob
 from subprocess import call, STDOUT
 import zc.buildout
@@ -11,6 +12,7 @@ class CreateUpdateJar(object):
     def __init__(self, buildout, name, options):
         self.name = name
         base = buildout['buildout']['directory']
+        self.logger = logging.getLogger(self.name)
 
         self.basedir = os.path.join(base, options['basedir'])
         self.input = options.get('input', '')
@@ -42,6 +44,7 @@ class CreateUpdateJar(object):
             args.update({'inputfiles': ' '.join(filenames[1:])})
             cmd = "jar uf %(jarfile)s %(inputfiles)s"%args 
 
+        self.logger.debug("running '%s'"%cmd)
         errors = tempfile.TemporaryFile()
         retcode = call(cmd.split(), cwd=self.basedir, stdout=errors, stderr=STDOUT)
         
@@ -51,6 +54,7 @@ class CreateUpdateJar(object):
             raise Exception("error while creating jar: \n%s\n"%errors.read())
         else:
             shutil.copyfile(jarfile, self.output)
+            self.logger.debug("saving to '%s'"%self.output)
             shutil.rmtree(tmpdir)
             return [self.output, self.output.replace('.war', '')]
 
