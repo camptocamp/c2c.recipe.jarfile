@@ -10,7 +10,7 @@ setup(
 
     author  = 'Frederic Junod',
     author_email = 'frederic.junod@camptocamp.com',
-    url = 'http://github.com/camptocamp/c2c.recipe.jarfile',
+    url = 'https://github.com/fredj/c2c.recipe.jarfile',
 
     description = 'A buildout recipe to create or update jar archive file.',
     long_description = open('README.rst').read(),
